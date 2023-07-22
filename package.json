@@ -13,6 +13,7 @@
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.8",
+    "react-native-qrcode-image": "github:Kishanjvaghela/react-native-qrcode-image",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-svg": "13.4.0",
     "react-native-view-shot": "3.5.0"

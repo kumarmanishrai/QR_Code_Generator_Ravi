@@ -11,27 +11,33 @@ import {
   Share,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import ViewShot from 'react-native-view-shot';
+import ViewShot from "react-native-view-shot";
 
 const YourApp = () => {
   const [qrvalue, setQrvalue] = useState("");
   const [inputText, setInputText] = useState("");
-  let myQRCode = useRef();
+  const [imageUri, setImageUri] = useState("");
+  // let myQRCode = useRef();
 
-  const viewShotRef = useRef();
+  const ref = useRef();
   
-    const shareQRCode = async () => {
-      try {
-        const uri = await viewShotRef.current.capture();
-  
-        Share.share({
-          title: 'QR Code',
-          url: uri,
-        });
-      } catch (error) {
-        console.error('Error sharing QR code:', error);
+  const captureQRCode = async () => {
+    const uri = await ref.current.capture()
+    setImageUri(uri)
+    console.log(imageUri);
+    shareQRCode(); 
+  }
+
+  const shareQRCode = () => {
+
+      const options = {
+        title: "QR Code",
+        url: imageUri
       }
-    };
+
+      Share.open(options)
+   
+  };
 
   // const shareQRCode = () => {
   //   myQRCode.toDataURL((dataURL) => {
@@ -42,20 +48,22 @@ const YourApp = () => {
   //       subject: "Share Link",
   //     };
   //     Share.share(shareImage).catch((error) => console.log(error));
-    // });
+  // });
   // };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text style={styles.titleStyle}>Generate Your Own QR Code 🎉</Text>
-        <QRCode
-          getRef={(ref) => (myQRCode = ref)}
-          value={qrvalue ? qrvalue : "NA"}
-          size={250}
-          color="black"
-          backgroundColor="white"
-        />
+        <ViewShot ref={ref} options={{format: 'jpg', quality:1.0}}>
+          <QRCode
+            // getRef={(ref) => (ref = ref)}
+            value={qrvalue ? qrvalue : "NA"}
+            size={250}
+            color="black"
+            backgroundColor="white"
+          />
+        </ViewShot>
         <Text style={styles.textStyle}>
           Enter below to generate your own QR Code.
         </Text>
@@ -66,16 +74,17 @@ const YourApp = () => {
         />
         <TouchableOpacity
           style={styles.buttonStyle}
-          onPress={() => setQrvalue(inputText)}
+          onPress={() => {
+            setQrvalue(inputText)
+          }}
         >
           <Text style={styles.buttonTextStyle}>Generate QR Code</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonStyle} onPress={shareQRCode}>
+        <TouchableOpacity style={styles.buttonStyle} onPress={captureQRCode}>
           <Text style={styles.buttonTextStyle}>Share QR Code</Text>
         </TouchableOpacity>
       </View>
-      <ViewShot ref={viewShotRef}>
-      </ViewShot>
+      <ViewShot ref={ref}></ViewShot>
       <Text style={styles.bottomStyle}>Built in React Native</Text>
     </SafeAreaView>
   );
